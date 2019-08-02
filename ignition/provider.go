@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/coreos/ignition/config/v2_1/types"
-	"github.com/coreos/ignition/config/validate/report"
+	"gopkg.in/coreos/ignition.v0/config/v2_1/types"
+	"gopkg.in/coreos/ignition.v0/config/validate/report"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/peterbourgon/diskv"

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/coreos/ignition/config/v2_1/types"
+	"gopkg.in/coreos/ignition.v0/config/v2_1/types"
 )
 
 func TestIngnitionLink(t *testing.T) {

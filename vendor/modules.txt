@@ -51,8 +51,7 @@ github.com/blang/semver
 github.com/coreos/go-semver/semver
 # github.com/coreos/go-systemd v0.0.0-20181012123002-c6f51f82210d
 github.com/coreos/go-systemd/unit
-# github.com/coreos/ignition v0.0.0-20170904171445-ea573e121f72
-github.com/coreos/ignition/config/v2_1/types
+# github.com/coreos/ignition v0.33.0
 github.com/coreos/ignition/config/validate/report
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -296,3 +295,6 @@ google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/balancer/base
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
+# gopkg.in/coreos/ignition.v0 v0.0.0-20170904171445-ea573e121f72
+gopkg.in/coreos/ignition.v0/config/v2_1/types
+gopkg.in/coreos/ignition.v0/config/validate/report

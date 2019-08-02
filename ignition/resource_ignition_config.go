@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 
-	"github.com/coreos/ignition/config/v2_1/types"
+	"gopkg.in/coreos/ignition.v0/config/v2_1/types"
 )
 
 var configReferenceResource = &schema.Resource{
