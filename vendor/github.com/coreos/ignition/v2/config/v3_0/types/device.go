@@ -1,4 +1,4 @@
-// Copyright 2017 CoreOS, Inc.
+// Copyright 2019 Red Hat, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,11 @@
 package types
 
 import (
-	"errors"
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
-var (
-	ErrFileIllegalMode = errors.New("illegal file mode")
-)
-
-func validateMode(m int) error {
-	if m < 0 || m > 07777 {
-		return ErrFileIllegalMode
-	}
-	return nil
+func (d Device) Validate(c path.ContextPath) (r report.Report) {
+	r.AddOnError(c, validatePath(string(d)))
+	return
 }

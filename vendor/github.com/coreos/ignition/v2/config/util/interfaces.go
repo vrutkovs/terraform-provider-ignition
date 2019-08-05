@@ -1,4 +1,4 @@
-// Copyright 2017 CoreOS, Inc.
+// Copyright 2019 Red Hat, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package types
+package util
 
 import (
-	"fmt"
-
-	"github.com/coreos/ignition/config/validate/report"
+	"reflect"
 )
 
-func (s Link) Validate() report.Report {
-	r := report.Report{}
-	if !s.Hard {
-		err := validatePath(s.Target)
-		if err != nil {
-			r.Add(report.Entry{
-				Message: fmt.Sprintf("problem with target path %q: %v", s.Target, err),
-				Kind:    report.EntryError,
-			})
-		}
+type MergesKeys interface {
+	MergedKeys() map[string]string
+}
+
+type IgnoresDups interface {
+	IgnoreDuplicates() map[string]struct{}
+}
+
+type Keyed interface {
+	Key() string
+}
+
+// CallKey is a helper to call the Key() function since this needs to happen a lot
+func CallKey(v reflect.Value) string {
+	if v.Kind() == reflect.String {
+		return v.Convert(reflect.TypeOf("")).Interface().(string)
 	}
-	return r
+	return v.Interface().(Keyed).Key()
 }

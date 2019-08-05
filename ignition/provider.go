@@ -8,8 +8,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/coreos/ignition/config/v2_1/types"
-	"github.com/coreos/ignition/config/validate/report"
+	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/report"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )

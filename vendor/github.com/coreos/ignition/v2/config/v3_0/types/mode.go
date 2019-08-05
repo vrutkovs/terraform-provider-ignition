@@ -15,16 +15,12 @@
 package types
 
 import (
-	"github.com/coreos/ignition/config/validate/report"
+	"github.com/coreos/ignition/v2/config/shared/errors"
 )
 
-func (d Directory) ValidateMode() report.Report {
-	r := report.Report{}
-	if err := validateMode(d.Mode); err != nil {
-		r.Add(report.Entry{
-			Message: err.Error(),
-			Kind:    report.EntryError,
-		})
+func validateMode(m *int) error {
+	if m != nil && (*m < 0 || *m > 07777) {
+		return errors.ErrFileIllegalMode
 	}
-	return r
+	return nil
 }

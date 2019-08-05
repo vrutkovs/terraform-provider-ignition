@@ -17,16 +17,12 @@ package types
 import (
 	"crypto"
 	"encoding/hex"
-	"errors"
 	"strings"
 
-	"github.com/coreos/ignition/config/validate/report"
-)
+	"github.com/coreos/ignition/v2/config/shared/errors"
 
-var (
-	ErrHashMalformed    = errors.New("malformed hash specifier")
-	ErrHashWrongSize    = errors.New("incorrect size for hash sum")
-	ErrHashUnrecognized = errors.New("unrecognized hash function")
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
 // HashParts will return the sum and function (in that order) of the hash stored
@@ -38,46 +34,36 @@ func (v Verification) HashParts() (string, string, error) {
 	}
 	parts := strings.SplitN(*v.Hash, "-", 2)
 	if len(parts) != 2 {
-		return "", "", ErrHashMalformed
+		return "", "", errors.ErrHashMalformed
 	}
 
 	return parts[0], parts[1], nil
 }
 
-func (v Verification) Validate() report.Report {
-	r := report.Report{}
-
+func (v Verification) Validate(c path.ContextPath) (r report.Report) {
+	c = c.Append("hash")
 	if v.Hash == nil {
 		// The hash can be nil
-		return r
+		return
 	}
 
 	function, sum, err := v.HashParts()
 	if err != nil {
-		r.Add(report.Entry{
-			Message: err.Error(),
-			Kind:    report.EntryError,
-		})
-		return r
+		r.AddOnError(c, err)
+		return
 	}
 	var hash crypto.Hash
 	switch function {
 	case "sha512":
 		hash = crypto.SHA512
 	default:
-		r.Add(report.Entry{
-			Message: ErrHashUnrecognized.Error(),
-			Kind:    report.EntryError,
-		})
-		return r
+		r.AddOnError(c, errors.ErrHashUnrecognized)
+		return
 	}
 
 	if len(sum) != hex.EncodedLen(hash.Size()) {
-		r.Add(report.Entry{
-			Message: ErrHashWrongSize.Error(),
-			Kind:    report.EntryError,
-		})
+		r.AddOnError(c, errors.ErrHashWrongSize)
 	}
 
-	return r
+	return
 }
