@@ -266,33 +266,6 @@ func TestIgnitionConfigSystemd(t *testing.T) {
 	})
 }
 
-func TestIgnitionConfigNetworkd(t *testing.T) {
-	testIgnition(t, `
-	variable "ignition_networkd_ids" {
-		type = "list"
-		default = [""]
-	}
-
-	data "ignition_networkd_unit" "test" {
-		name = "00-eth0.network"
-		content = "[Match]\nName=eth0\n\n[Network]\nAddress=10.0.1.7"
-	}
-
-	data "ignition_config" "test" {
-		networkd = concat(
-			[data.ignition_networkd_unit.test.id],
-			var.ignition_networkd_ids
-			)
-	}
-	`, func(c *types.Config) error {
-		f := c.Networkd.Units[0]
-		if f.Name != "00-eth0.network" {
-			return fmt.Errorf("device, found %q", f.Name)
-		}
-		return nil
-	})
-}
-
 func TestIgnitionConfigUsers(t *testing.T) {
 	testIgnition(t, `
 	variable "ignition_user_ids" {

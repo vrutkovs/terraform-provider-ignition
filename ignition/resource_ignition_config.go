@@ -64,11 +64,6 @@ func dataSourceConfig() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"networkd": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
 			"users": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -152,11 +147,6 @@ func buildConfig(d *schema.ResourceData, c *cache) (*types.Config, error) {
 	}
 
 	config.Systemd, err = buildSystemd(d, c)
-	if err != nil {
-		return nil, err
-	}
-
-	config.Networkd, err = buildNetworkd(d, c)
 	if err != nil {
 		return nil, err
 	}
@@ -307,25 +297,6 @@ func buildSystemd(d *schema.ResourceData, c *cache) (types.Systemd, error) {
 
 	return systemd, nil
 
-}
-
-func buildNetworkd(d *schema.ResourceData, c *cache) (types.Networkd, error) {
-	networkd := types.Networkd{}
-
-	for _, id := range d.Get("networkd").([]interface{}) {
-		if id == nil {
-			continue
-		}
-
-		u, ok := c.networkdUnits[id.(string)]
-		if !ok {
-			return networkd, fmt.Errorf("invalid networkd unit %q, unknown networkd unit id", id)
-		}
-
-		networkd.Units = append(networkd.Units, *u)
-	}
-
-	return networkd, nil
 }
 
 func buildPasswd(d *schema.ResourceData, c *cache) (types.Passwd, error) {
