@@ -64,20 +64,3 @@ func TestIngnitionRaidInvalidLevel(t *testing.T) {
 		}
 	`, regexp.MustCompile("raid level"))
 }
-
-func TestIngnitionRaidInvalidDevices(t *testing.T) {
-	testIgnitionError(t, `
-		data "ignition_raid" "foo" {
-			name = "foo"
-			level = "raid10"
-			devices = ["foo"]
-			spares = 42
-		}
-
-		data "ignition_config" "test" {
-			arrays = [
-				"${data.ignition_raid.foo.id}",
-			]
-		}
-	`, regexp.MustCompile("absolute"))
-}

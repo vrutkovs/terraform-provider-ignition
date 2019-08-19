@@ -14,11 +14,6 @@ func dataSourceFile() *schema.Resource {
 		Exists: resourceFileExists,
 		Read:   resourceFileRead,
 		Schema: map[string]*schema.Schema{
-			"filesystem": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
 			"path": {
 				Type:     schema.TypeString,
 				Required: true,

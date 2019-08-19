@@ -45,9 +45,9 @@ func TestIgnitionFileMerge(t *testing.T) {
 				verification = "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 			}
 
-		    merge {
-		    	source = "foo"
-		    	verification = "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+			merge {
+				source = "foo"
+				verification = "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 			}
 		}
 	`, func(c *types.Config) error {
@@ -129,10 +129,10 @@ func TestIgnitionConfigDisks(t *testing.T) {
 	data "ignition_disk" "test" {
 		device = "/dev/sda"
 		partition {
-			start = 2048
-			size = 20480
+			startmib = 2048
+			sizemib = 20480
 		}
-	 }
+	}
 
 	data "ignition_config" "test" {
 		disks = concat([data.ignition_disk.test.id],
@@ -216,7 +216,7 @@ func TestIgnitionConfigFiles(t *testing.T) {
 		content {
 			content = "Hello World!"
 		}
-	 }
+	}
 
 	data "ignition_config" "test" {
 		files = concat(

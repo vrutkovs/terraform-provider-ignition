@@ -10,10 +10,6 @@ import (
 
 func TestIngnitionFilesystem(t *testing.T) {
 	testIgnition(t, `
-		data "ignition_filesystem" "foo" {
-			path = "/foo"
-		}
-
 		data "ignition_filesystem" "qux" {
 			device = "/qux"
 			format = "ext4"
@@ -30,22 +26,16 @@ func TestIngnitionFilesystem(t *testing.T) {
 
 		data "ignition_config" "test" {
 			filesystems = [
-				"${data.ignition_filesystem.foo.id}",
 				"${data.ignition_filesystem.qux.id}",
 				"${data.ignition_filesystem.baz.id}",
 			]
 		}
 	`, func(c *types.Config) error {
-		if len(c.Storage.Filesystems) != 3 {
+		if len(c.Storage.Filesystems) != 2 {
 			return fmt.Errorf("disks, found %d", len(c.Storage.Filesystems))
 		}
 
 		f := c.Storage.Filesystems[0]
-		if string(*f.Path) != "/foo" {
-			return fmt.Errorf("path, found %q", *f.Path)
-		}
-
-		f = c.Storage.Filesystems[1]
 		if f.Device != "/qux" {
 			return fmt.Errorf("device, found %q", f.Device)
 		}
@@ -54,7 +44,7 @@ func TestIngnitionFilesystem(t *testing.T) {
 			return fmt.Errorf("format, found %q", *f.Format)
 		}
 
-		f = c.Storage.Filesystems[2]
+		f = c.Storage.Filesystems[1]
 
 		if f.Device != "/baz" {
 			return fmt.Errorf("device, found %q", f.Device)
@@ -87,7 +77,8 @@ func TestIngnitionFilesystem(t *testing.T) {
 func TestIngnitionFilesystemInvalidPath(t *testing.T) {
 	testIgnitionError(t, `
 		data "ignition_filesystem" "foo" {
-			name = "foo"
+			device = "/foo"
+			format = "ext4"
 			path = "foo"
 		}
 
@@ -97,23 +88,4 @@ func TestIngnitionFilesystemInvalidPath(t *testing.T) {
 			]
 		}
 	`, regexp.MustCompile("absolute"))
-}
-
-func TestIngnitionFilesystemInvalidPathAndMount(t *testing.T) {
-	testIgnitionError(t, `
-		data "ignition_filesystem" "foo" {
-			name = "foo"
-			path = "/foo"
-			mount {
-				device = "/qux"
-				format = "ext4"
-			}
-		}
-
-		data "ignition_config" "test" {
-			filesystems = [
-				"${data.ignition_filesystem.foo.id}",
-			]
-		}
-	`, regexp.MustCompile("mount and path"))
 }

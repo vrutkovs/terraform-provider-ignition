@@ -11,7 +11,6 @@ import (
 func TestIngnitionFile(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_file" "foo" {
-			filesystem = "foo"
 			path = "/foo"
 			content {
 				content = "foo"
@@ -22,7 +21,6 @@ func TestIngnitionFile(t *testing.T) {
 		}
 
 		data "ignition_file" "qux" {
-			filesystem = "qux"
 			path = "/qux"
 			source {
 				source = "qux"
@@ -32,7 +30,6 @@ func TestIngnitionFile(t *testing.T) {
 		}
 
 		data "ignition_file" "nop" {
-			filesystem = "nop"
 			path = "/nop"
 			source {
 				source = "nop"
@@ -114,7 +111,6 @@ func TestIngnitionFile(t *testing.T) {
 func TestIngnitionFileInvalidMode(t *testing.T) {
 	testIgnitionError(t, `
 		data "ignition_file" "foo" {
-			filesystem = "foo"
 			path = "/foo"
 			mode = 999999
 			content {
@@ -133,7 +129,6 @@ func TestIngnitionFileInvalidMode(t *testing.T) {
 func TestIngnitionFileInvalidPath(t *testing.T) {
 	testIgnitionError(t, `
 		data "ignition_file" "foo" {
-			filesystem = "foo"
 			path = "foo"
 			mode = 999999
 			content {

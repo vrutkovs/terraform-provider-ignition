@@ -37,12 +37,12 @@ func dataSourceDisk() *schema.Resource {
 							Optional: true,
 							ForceNew: true,
 						},
-						"size": {
+						"sizemib": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							ForceNew: true,
 						},
-						"start": {
+						"startmib": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							ForceNew: true,
@@ -101,10 +101,14 @@ func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 		if tlabel != "" {
 			p.Label = &tlabel
 		}
-		tsize := v["size"].(int)
-		p.SizeMiB = &tsize
-		tstart := v["start"].(int)
-		p.SizeMiB = &tstart
+		tsize := v["sizemib"].(int)
+		if tsize != 0 {
+			p.SizeMiB = &tsize
+		}
+		tstart := v["startmib"].(int)
+		if tstart != 0 {
+			p.StartMiB = &tstart
+		}
 		tguid := v["type_guid"].(string)
 		p.TypeGUID = &tguid
 

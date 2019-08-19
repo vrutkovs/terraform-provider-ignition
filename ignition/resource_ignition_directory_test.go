@@ -11,7 +11,6 @@ import (
 func TestIngnitionDirectory(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_directory" "foo" {
-			filesystem = "foo"
 			path = "/foo"
 			mode = 420
 			uid = 42
@@ -53,7 +52,6 @@ func TestIngnitionDirectory(t *testing.T) {
 func TestIngnitionDirectoryInvalidMode(t *testing.T) {
 	testIgnitionError(t, `
 		data "ignition_directory" "foo" {
-			filesystem = "foo"
 			path = "/foo"
 			mode = 999999
 		}
@@ -69,7 +67,6 @@ func TestIngnitionDirectoryInvalidMode(t *testing.T) {
 func TestIngnitionDirectoryInvalidPath(t *testing.T) {
 	testIgnitionError(t, `
 		data "ignition_directory" "foo" {
-			filesystem = "foo"
 			path = "foo"
 			mode = 999999
 		}
