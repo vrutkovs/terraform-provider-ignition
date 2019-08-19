@@ -77,18 +77,31 @@ func resourceSystemdUnitExists(d *schema.ResourceData, meta interface{}) (bool, 
 func buildSystemdUnit(d *schema.ResourceData, c *cache) (string, error) {
 	enabled := d.Get("enabled").(bool)
 	unit := &types.Unit{
-		Name:     d.Get("name").(string),
-		Contents: d.Get("content").(*string),
-		Enabled:  &enabled,
-		Mask:     d.Get("mask").(*bool),
+		Name:    d.Get("name").(string),
+		Enabled: &enabled,
+	}
+	content, hasContent := d.GetOk("content")
+	if hasContent {
+		str := content.(string)
+		unit.Contents = &str
+	}
+
+	mask, hasMask := d.GetOk("mask")
+	if hasMask {
+		bmask := mask.(bool)
+		unit.Mask = &bmask
 	}
 
 	for _, raw := range d.Get("dropin").([]interface{}) {
 		value := raw.(map[string]interface{})
 
 		d := types.Dropin{
-			Name:     value["name"].(string),
-			Contents: value["content"].(*string),
+			Name: value["name"].(string),
+		}
+
+		contents := value["content"].(string)
+		if contents != "" {
+			d.Contents = &contents
 		}
 
 		if err := handleReport(d.Validate(path.ContextPath{})); err != nil {

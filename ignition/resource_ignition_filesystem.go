@@ -2,6 +2,7 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	vcontext_path "github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -108,7 +109,7 @@ func buildFilesystem(d *schema.ResourceData, c *cache) (string, error) {
 		fs.Options = castSliceInterfaceToMountOption(options.([]interface{}))
 	}
 
-	return c.addFilesystem(fs), handleReport(fs.Validate(path.ContextPath{}))
+	return c.addFilesystem(fs), handleReport(fs.Validate(vcontext_path.ContextPath{}))
 }
 
 func castSliceInterfaceToMountOption(i []interface{}) []types.FilesystemOption {

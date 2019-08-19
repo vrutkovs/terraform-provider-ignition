@@ -130,8 +130,14 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 	}
 
 	if hasSource {
-		contents.Source = d.Get("source.0.source").(*string)
-		contents.Compression = d.Get("source.0.compression").(*string)
+		src := d.Get("source.0.source").(string)
+		if src != "" {
+			contents.Source = &src
+		}
+		compression := d.Get("source.0.compression").(string)
+		if compression != "" {
+			contents.Compression = &compression
+		}
 		h := d.Get("source.0.verification").(string)
 		if h != "" {
 			contents.Verification.Hash = &h
@@ -144,7 +150,11 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 
 	file.Contents = contents
 
-	file.Mode = d.Get("mode").(*int)
+	mode, hasMode := d.GetOk("mode")
+	if hasMode {
+		imode := mode.(int)
+		file.Mode = &imode
+	}
 
 	uid := d.Get("uid").(int)
 	if uid != 0 {

@@ -68,7 +68,12 @@ func buildLink(d *schema.ResourceData, c *cache) (string, error) {
 	link := &types.Link{}
 	link.Path = d.Get("path").(string)
 	link.Target = d.Get("target").(string)
-	link.Hard = d.Get("hard").(*bool)
+
+	hard, hasHard := d.GetOk("hard")
+	if hasHard {
+		bhard := hard.(bool)
+		link.Hard = &bhard
+	}
 
 	uid := d.Get("uid").(int)
 	if uid != 0 {
