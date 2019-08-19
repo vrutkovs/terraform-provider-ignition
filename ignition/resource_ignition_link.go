@@ -65,10 +65,9 @@ func resourceLinkExists(d *schema.ResourceData, meta interface{}) (bool, error) 
 
 func buildLink(d *schema.ResourceData, c *cache) (string, error) {
 	link := &types.Link{}
-	link.Filesystem = d.Get("filesystem").(string)
 	link.Path = d.Get("path").(string)
 	link.Target = d.Get("target").(string)
-	link.Hard = d.Get("hard").(bool)
+	link.Hard = d.Get("hard").(*bool)
 
 	uid := d.Get("uid").(int)
 	if uid != 0 {

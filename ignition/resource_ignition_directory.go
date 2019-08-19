@@ -56,7 +56,7 @@ func resourceDirectoryExists(d *schema.ResourceData, meta interface{}) (bool, er
 func buildDirectory(d *schema.ResourceData, c *cache) (string, error) {
 	dir := &types.Directory{}
 	dir.Path = d.Get("path").(string)
-	dir.Mode = d.Get("mode").(int)
+	dir.Mode = d.Get("mode").(*int)
 	uid := d.Get("uid").(int)
 	if uid != 0 {
 		dir.User = types.NodeUser{ID: &uid}

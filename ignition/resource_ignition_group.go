@@ -51,7 +51,7 @@ func resourceGroupExists(d *schema.ResourceData, meta interface{}) (bool, error)
 func buildGroup(d *schema.ResourceData, c *cache) (string, error) {
 	group := &types.PasswdGroup{
 		Name:         d.Get("name").(string),
-		PasswordHash: d.Get("password_hash").(string),
+		PasswordHash: d.Get("password_hash").(*string),
 		Gid:          getInt(d, "gid"),
 	}
 

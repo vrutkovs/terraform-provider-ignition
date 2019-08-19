@@ -80,7 +80,7 @@ func resourceDiskExists(d *schema.ResourceData, meta interface{}) (bool, error) 
 func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 	disk := &types.Disk{
 		Device:    d.Get("device").(string),
-		WipeTable: d.Get("wipe_table").(bool),
+		WipeTable: d.Get("wipe_table").(*bool),
 	}
 
 	if err := handleReport(disk.ValidateDevice()); err != nil {
@@ -90,11 +90,11 @@ func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 	for _, raw := range d.Get("partition").([]interface{}) {
 		v := raw.(map[string]interface{})
 		p := types.Partition{
-			Label:    v["label"].(string),
+			Label:    v["label"].(*string),
 			Number:   v["number"].(int),
-			Size:     v["size"].(int),
-			Start:    v["start"].(int),
-			TypeGUID: v["type_guid"].(string),
+			SizeMiB:  v["size"].(*int),
+			StartMiB: v["start"].(*int),
+			TypeGUID: v["type_guid"].(*string),
 		}
 
 		if err := handleReport(p.ValidateLabel()); err != nil {

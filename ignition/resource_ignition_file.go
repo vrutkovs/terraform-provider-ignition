@@ -128,8 +128,8 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 	}
 
 	if hasSource {
-		contents.Source = d.Get("source.0.source").(string)
-		contents.Compression = d.Get("source.0.compression").(string)
+		contents.Source = d.Get("source.0.source").(*string)
+		contents.Compression = d.Get("source.0.compression").(*string)
 		h := d.Get("source.0.verification").(string)
 		if h != "" {
 			contents.Verification.Hash = &h
@@ -137,10 +137,6 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 	}
 
 	file := &types.File{}
-	file.Filesystem = d.Get("filesystem").(string)
-	if err := handleReport(file.ValidateFilesystem()); err != nil {
-		return "", err
-	}
 
 	file.Path = d.Get("path").(string)
 	if err := handleReport(file.ValidatePath()); err != nil {
@@ -149,7 +145,7 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 
 	file.Contents = contents
 
-	file.Mode = d.Get("mode").(int)
+	file.Mode = d.Get("mode").(*int)
 	if err := handleReport(file.ValidateMode()); err != nil {
 		return "", err
 	}

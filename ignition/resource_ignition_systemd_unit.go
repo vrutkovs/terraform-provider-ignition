@@ -77,9 +77,9 @@ func buildSystemdUnit(d *schema.ResourceData, c *cache) (string, error) {
 	enabled := d.Get("enabled").(bool)
 	unit := &types.Unit{
 		Name:     d.Get("name").(string),
-		Contents: d.Get("content").(string),
+		Contents: d.Get("content").(*string),
 		Enabled:  &enabled,
-		Mask:     d.Get("mask").(bool),
+		Mask:     d.Get("mask").(*bool),
 	}
 
 	if err := handleReport(unit.ValidateName()); err != nil {
@@ -95,7 +95,7 @@ func buildSystemdUnit(d *schema.ResourceData, c *cache) (string, error) {
 
 		d := types.Dropin{
 			Name:     value["name"].(string),
-			Contents: value["content"].(string),
+			Contents: value["content"].(*string),
 		}
 
 		if err := handleReport(d.Validate()); err != nil {

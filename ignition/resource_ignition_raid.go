@@ -58,7 +58,7 @@ func buildRaid(d *schema.ResourceData, c *cache) (string, error) {
 	raid := &types.Raid{
 		Name:   d.Get("name").(string),
 		Level:  d.Get("level").(string),
-		Spares: d.Get("spares").(int),
+		Spares: d.Get("spares").(*int),
 	}
 
 	if err := handleReport(raid.ValidateLevel()); err != nil {
