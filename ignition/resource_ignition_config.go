@@ -81,7 +81,7 @@ func dataSourceConfig() *schema.Resource {
 				MaxItems: 1,
 				Elem:     configReferenceResource,
 			},
-			"append": {
+			"merge": {
 				Type:     schema.TypeList,
 				ForceNew: true,
 				Optional: true,
@@ -173,7 +173,7 @@ func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {
 		}
 	}
 
-	ar := d.Get("append").([]interface{})
+	ar := d.Get("merge").([]interface{})
 	if len(ar) != 0 {
 		for _, rr := range ar {
 			r, err := buildConfigReference(rr.(map[string]interface{}))
@@ -181,7 +181,7 @@ func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {
 				return i, err
 			}
 
-			i.Config.Append = append(i.Config.Append, *r)
+			i.Config.Merge = append(i.Config.Merge, *r)
 		}
 	}
 
