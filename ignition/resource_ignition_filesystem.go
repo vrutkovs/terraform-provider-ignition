@@ -86,62 +86,40 @@ func resourceFilesystemExists(d *schema.ResourceData, meta interface{}) (bool, e
 
 func buildFilesystem(d *schema.ResourceData, c *cache) (string, error) {
 	fs := &types.Filesystem{
-		Name: d.Get("name").(string),
+		Path:           d.Get("path").(*string),
+		Device:         d.Get("device").(string),
+		Format:         d.Get("format").(*string),
+		WipeFilesystem: d.Get("wipe_filesystem").(*bool),
 	}
 
-	if _, ok := d.GetOk("mount"); ok {
-		fs.Mount = &types.Mount{
-			Device:         d.Get("mount.0.device").(string),
-			Format:         d.Get("mount.0.format").(string),
-			WipeFilesystem: d.Get("mount.0.wipe_filesystem").(bool),
-		}
-
-		if err := handleReport(fs.Mount.ValidateDevice()); err != nil {
-			return "", err
-		}
-
-		label, hasLabel := d.GetOk("mount.0.label")
-		if hasLabel {
-			str := label.(string)
-			fs.Mount.Label = &str
-
-			if err := handleReport(fs.Mount.ValidateLabel()); err != nil {
-				return "", err
-			}
-		}
-
-		uuid, hasUUID := d.GetOk("mount.0.uuid")
-		if hasUUID {
-			str := uuid.(string)
-			fs.Mount.UUID = &str
-		}
-
-		options, hasOptions := d.GetOk("mount.0.options")
-		if hasOptions {
-			fs.Mount.Options = castSliceInterfaceToMountOption(options.([]interface{}))
-		}
+	label, hasLabel := d.GetOk("label")
+	if hasLabel {
+		str := label.(string)
+		fs.Label = &str
 	}
 
-	if p, ok := d.GetOk("path"); ok {
-		path := p.(string)
-		fs.Path = &path
+	uuid, hasUUID := d.GetOk("uuid")
+	if hasUUID {
+		str := uuid.(string)
+		fs.UUID = &str
+	}
 
-		if err := handleReport(fs.ValidatePath()); err != nil {
-			return "", err
-		}
+	options, hasOptions := d.GetOk("options")
+	if hasOptions {
+		fs.Options = castSliceInterfaceToMountOption(options.([]interface{}))
 	}
 
 	return c.addFilesystem(fs), handleReport(fs.Validate())
 }
 
-func castSliceInterfaceToMountOption(i []interface{}) []types.MountOption {
-	var o []types.MountOption
+func castSliceInterfaceToMountOption(i []interface{}) []types.FilesystemOption {
+	var o []types.FilesystemOption
 	for _, value := range i {
 		if value == nil {
 			continue
 		}
 
-		o = append(o, types.MountOption(value.(string)))
+		o = append(o, types.FilesystemOption(value.(string)))
 	}
 
 	return o
