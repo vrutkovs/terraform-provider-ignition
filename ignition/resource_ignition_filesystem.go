@@ -10,51 +10,36 @@ func dataSourceFilesystem() *schema.Resource {
 		Exists: resourceFilesystemExists,
 		Read:   resourceFilesystemRead,
 		Schema: map[string]*schema.Schema{
-			"name": {
+			"device": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
+			"format": {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
+			"wipe_filesystem": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				ForceNew: true,
+			},
+			"label": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
-			"mount": {
+			"uuid": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"options": {
 				Type:     schema.TypeList,
 				Optional: true,
 				ForceNew: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"device": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"format": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"wipe_filesystem": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							ForceNew: true,
-						},
-						"label": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-						"uuid": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-						"options": {
-							Type:     schema.TypeList,
-							Optional: true,
-							ForceNew: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-						},
-					},
-				},
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 			"path": {
 				Type:     schema.TypeString,
