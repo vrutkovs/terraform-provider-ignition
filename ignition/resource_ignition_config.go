@@ -190,7 +190,10 @@ func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {
 
 func buildConfigReference(raw map[string]interface{}) (*types.ConfigReference, error) {
 	r := &types.ConfigReference{}
-	r.Source = raw["source"].(*string)
+	source := raw["source"].(string)
+	if source != "" {
+		r.Source = &source
+	}
 
 	hash := raw["verification"].(string)
 	if hash != "" {

@@ -57,9 +57,13 @@ func resourceRaidExists(d *schema.ResourceData, meta interface{}) (bool, error) 
 
 func buildRaid(d *schema.ResourceData, c *cache) (string, error) {
 	raid := &types.Raid{
-		Name:   d.Get("name").(string),
-		Level:  d.Get("level").(string),
-		Spares: d.Get("spares").(*int),
+		Name:  d.Get("name").(string),
+		Level: d.Get("level").(string),
+	}
+	spares, hasSpares := d.GetOk("spares")
+	if hasSpares {
+		ispares := spares.(int)
+		raid.Spares = &ispares
 	}
 
 	for _, value := range d.Get("devices").([]interface{}) {

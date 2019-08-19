@@ -80,8 +80,12 @@ func resourceDiskExists(d *schema.ResourceData, meta interface{}) (bool, error) 
 
 func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 	disk := &types.Disk{
-		Device:    d.Get("device").(string),
-		WipeTable: d.Get("wipe_table").(*bool),
+		Device: d.Get("device").(string),
+	}
+	wipe, hasWipeTable := d.GetOk("wipe_table")
+	if hasWipeTable {
+		bwipe := wipe.(bool)
+		disk.WipeTable = &bwipe
 	}
 
 	if err := handleReport(disk.Validate(path.ContextPath{})); err != nil {
@@ -91,12 +95,18 @@ func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 	for _, raw := range d.Get("partition").([]interface{}) {
 		v := raw.(map[string]interface{})
 		p := types.Partition{
-			Label:    v["label"].(*string),
-			Number:   v["number"].(int),
-			SizeMiB:  v["size"].(*int),
-			StartMiB: v["start"].(*int),
-			TypeGUID: v["type_guid"].(*string),
+			Number: v["number"].(int),
 		}
+		tlabel := v["label"].(string)
+		if tlabel != "" {
+			p.Label = &tlabel
+		}
+		tsize := v["size"].(int)
+		p.SizeMiB = &tsize
+		tstart := v["start"].(int)
+		p.SizeMiB = &tstart
+		tguid := v["type_guid"].(string)
+		p.TypeGUID = &tguid
 
 		disk.Partitions = append(disk.Partitions, p)
 	}

@@ -2,7 +2,6 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
-	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -72,10 +71,24 @@ func resourceFilesystemExists(d *schema.ResourceData, meta interface{}) (bool, e
 
 func buildFilesystem(d *schema.ResourceData, c *cache) (string, error) {
 	fs := &types.Filesystem{
-		Path:           d.Get("path").(*string),
-		Device:         d.Get("device").(string),
-		Format:         d.Get("format").(*string),
-		WipeFilesystem: d.Get("wipe_filesystem").(*bool),
+		Device: d.Get("device").(string),
+	}
+	path, hasPath := d.GetOk("path")
+	if hasPath {
+		str := path.(string)
+		fs.Path = &str
+	}
+
+	format, hasFormat := d.GetOk("format")
+	if hasFormat {
+		str := format.(string)
+		fs.Format = &str
+	}
+
+	wipe, hasWipeFilesystem := d.GetOk("wipe_filesystem")
+	if hasWipeFilesystem {
+		wp := wipe.(bool)
+		fs.WipeFilesystem = &wp
 	}
 
 	label, hasLabel := d.GetOk("label")
