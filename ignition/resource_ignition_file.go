@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -140,16 +141,10 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 	file := &types.File{}
 
 	file.Path = d.Get("path").(string)
-	if err := handleReport(file.ValidatePath()); err != nil {
-		return "", err
-	}
 
 	file.Contents = contents
 
 	file.Mode = d.Get("mode").(*int)
-	if err := handleReport(file.ValidateMode()); err != nil {
-		return "", err
-	}
 
 	uid := d.Get("uid").(int)
 	if uid != 0 {
@@ -160,7 +155,9 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 	if gid != 0 {
 		file.Group = types.NodeGroup{ID: &gid}
 	}
-
+	if err := handleReport(file.Validate(path.ContextPath{})); err != nil {
+		return "", err
+	}
 	return c.addFile(file), nil
 }
 

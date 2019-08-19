@@ -2,6 +2,7 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -83,7 +84,7 @@ func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 		WipeTable: d.Get("wipe_table").(*bool),
 	}
 
-	if err := handleReport(disk.ValidateDevice()); err != nil {
+	if err := handleReport(disk.Validate(path.ContextPath{})); err != nil {
 		return "", err
 	}
 
@@ -97,22 +98,10 @@ func buildDisk(d *schema.ResourceData, c *cache) (string, error) {
 			TypeGUID: v["type_guid"].(*string),
 		}
 
-		if err := handleReport(p.ValidateLabel()); err != nil {
-			return "", err
-		}
-
-		if err := handleReport(p.ValidateGUID()); err != nil {
-			return "", err
-		}
-
-		if err := handleReport(p.ValidateTypeGUID()); err != nil {
-			return "", err
-		}
-
 		disk.Partitions = append(disk.Partitions, p)
 	}
 
-	if err := handleReport(disk.ValidatePartitions()); err != nil {
+	if err := handleReport(disk.Validate(path.ContextPath{})); err != nil {
 		return "", err
 	}
 

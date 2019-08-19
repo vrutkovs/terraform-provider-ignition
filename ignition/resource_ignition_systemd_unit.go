@@ -2,6 +2,7 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -82,14 +83,6 @@ func buildSystemdUnit(d *schema.ResourceData, c *cache) (string, error) {
 		Mask:     d.Get("mask").(*bool),
 	}
 
-	if err := handleReport(unit.ValidateName()); err != nil {
-		return "", err
-	}
-
-	if err := handleReport(unit.ValidateContents()); err != nil {
-		return "", err
-	}
-
 	for _, raw := range d.Get("dropin").([]interface{}) {
 		value := raw.(map[string]interface{})
 
@@ -98,12 +91,12 @@ func buildSystemdUnit(d *schema.ResourceData, c *cache) (string, error) {
 			Contents: value["content"].(*string),
 		}
 
-		if err := handleReport(d.Validate()); err != nil {
+		if err := handleReport(d.Validate(path.ContextPath{})); err != nil {
 			return "", err
 		}
 
 		unit.Dropins = append(unit.Dropins, d)
 	}
 
-	return c.addSystemdUnit(unit), nil
+	return c.addSystemdUnit(unit), handleReport(unit.Validate(path.ContextPath{}))
 }

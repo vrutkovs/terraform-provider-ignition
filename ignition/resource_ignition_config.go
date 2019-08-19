@@ -156,7 +156,7 @@ func buildConfig(d *schema.ResourceData, c *cache) (*types.Config, error) {
 		return nil, err
 	}
 
-	return config, handleReport(config.Validate())
+	return config, nil
 }
 
 func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {

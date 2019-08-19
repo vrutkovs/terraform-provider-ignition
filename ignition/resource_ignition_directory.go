@@ -2,6 +2,7 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -67,7 +68,7 @@ func buildDirectory(d *schema.ResourceData, c *cache) (string, error) {
 		dir.Group = types.NodeGroup{ID: &gid}
 	}
 
-	if err := handleReport(dir.Validate()); err != nil {
+	if err := handleReport(dir.Validate(path.ContextPath{})); err != nil {
 		return "", err
 	}
 

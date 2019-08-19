@@ -2,6 +2,7 @@ package ignition
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -79,5 +80,5 @@ func buildLink(d *schema.ResourceData, c *cache) (string, error) {
 		link.Group = types.NodeGroup{ID: &gid}
 	}
 
-	return c.addLink(link), handleReport(link.Validate())
+	return c.addLink(link), handleReport(link.Validate(path.ContextPath{}))
 }
