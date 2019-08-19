@@ -36,8 +36,8 @@ func TestIngnitionGroup(t *testing.T) {
 			return fmt.Errorf("name, found %q", g.Name)
 		}
 
-		if g.PasswordHash != "password" {
-			return fmt.Errorf("password_hash, found %q", g.PasswordHash)
+		if *g.PasswordHash != "password" {
+			return fmt.Errorf("password_hash, found %q", *g.PasswordHash)
 		}
 
 		if g.Gid == nil || *g.Gid != 42 {

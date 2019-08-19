@@ -30,10 +30,6 @@ func TestIngnitionLink(t *testing.T) {
 		}
 
 		f := c.Storage.Links[0]
-		if f.Filesystem != "foo" {
-			return fmt.Errorf("filesystem, found %q", f.Filesystem)
-		}
-
 		if f.Path != "/foo" {
 			return fmt.Errorf("path, found %q", f.Path)
 		}
@@ -42,7 +38,7 @@ func TestIngnitionLink(t *testing.T) {
 			return fmt.Errorf("target, found %q", f.Target)
 		}
 
-		if f.Hard != true {
+		if *f.Hard != true {
 			return fmt.Errorf("hard, found %v", f.Hard)
 		}
 

@@ -53,20 +53,16 @@ func TestIngnitionFile(t *testing.T) {
 		}
 
 		f := c.Storage.Files[0]
-		if f.Filesystem != "foo" {
-			return fmt.Errorf("filesystem, found %q", f.Filesystem)
-		}
-
 		if f.Path != "/foo" {
 			return fmt.Errorf("path, found %q", f.Path)
 		}
 
-		if f.Contents.Source != "data:text/plain;charset=utf-8;base64,Zm9v" {
-			return fmt.Errorf("contents.source, found %q", f.Contents.Source)
+		if string(*f.Contents.Source) != "data:text/plain;charset=utf-8;base64,Zm9v" {
+			return fmt.Errorf("contents.source, found %q", *f.Contents.Source)
 		}
 
-		if f.Mode != 420 {
-			return fmt.Errorf("mode, found %q", f.Mode)
+		if int(*f.Mode) != 420 {
+			return fmt.Errorf("mode, found %q", *f.Mode)
 		}
 
 		if *f.User.ID != 42 {
@@ -78,20 +74,16 @@ func TestIngnitionFile(t *testing.T) {
 		}
 
 		f = c.Storage.Files[1]
-		if f.Filesystem != "qux" {
-			return fmt.Errorf("filesystem, found %q", f.Filesystem)
-		}
-
 		if f.Path != "/qux" {
 			return fmt.Errorf("path, found %q", f.Path)
 		}
 
-		if f.Contents.Source != "qux" {
-			return fmt.Errorf("contents.source, found %q", f.Contents.Source)
+		if string(*f.Contents.Source) != "qux" {
+			return fmt.Errorf("contents.source, found %q", *f.Contents.Source)
 		}
 
-		if f.Contents.Compression != "gzip" {
-			return fmt.Errorf("contents.compression, found %q", f.Contents.Compression)
+		if string(*f.Contents.Compression) != "gzip" {
+			return fmt.Errorf("contents.compression, found %q", *f.Contents.Compression)
 		}
 
 		if *f.Contents.Verification.Hash != "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" {
@@ -99,20 +91,16 @@ func TestIngnitionFile(t *testing.T) {
 		}
 
 		f = c.Storage.Files[2]
-		if f.Filesystem != "nop" {
-			return fmt.Errorf("filesystem, found %q", f.Filesystem)
-		}
-
 		if f.Path != "/nop" {
 			return fmt.Errorf("path, found %q", f.Path)
 		}
 
-		if f.Contents.Source != "nop" {
-			return fmt.Errorf("contents.source, found %q", f.Contents.Source)
+		if string(*f.Contents.Source) != "nop" {
+			return fmt.Errorf("contents.source, found %q", *f.Contents.Source)
 		}
 
-		if f.Contents.Compression != "gzip" {
-			return fmt.Errorf("contents.compression, found %q", f.Contents.Compression)
+		if string(*f.Contents.Compression) != "gzip" {
+			return fmt.Errorf("contents.compression, found %q", *f.Contents.Compression)
 		}
 
 		if f.Contents.Verification.Hash != nil {

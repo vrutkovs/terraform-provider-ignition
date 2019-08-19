@@ -40,20 +40,20 @@ func TestIngnitionDisk(t *testing.T) {
 		}
 
 		p := d.Partitions[0]
-		if p.Label != "qux" {
-			return fmt.Errorf("parition.0.label, found %q", p.Label)
+		if string(*p.Label) != "qux" {
+			return fmt.Errorf("parition.0.label, found %q", *p.Label)
 		}
 
-		if p.Size != 42 {
-			return fmt.Errorf("parition.0.size, found %q", p.Size)
+		if int(*p.SizeMiB) != 42 {
+			return fmt.Errorf("parition.0.size, found %q", *p.SizeMiB)
 		}
 
-		if p.Start != 2048 {
-			return fmt.Errorf("parition.0.start, found %q", p.Start)
+		if int(*p.StartMiB) != 2048 {
+			return fmt.Errorf("parition.0.start, found %q", *p.StartMiB)
 		}
 
-		if p.TypeGUID != "01234567-89AB-CDEF-EDCB-A98765432101" {
-			return fmt.Errorf("parition.0.type_guid, found %q", p.TypeGUID)
+		if string(*p.TypeGUID) != "01234567-89AB-CDEF-EDCB-A98765432101" {
+			return fmt.Errorf("parition.0.type_guid, found %q", *p.TypeGUID)
 		}
 
 		return nil

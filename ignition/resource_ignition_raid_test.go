@@ -40,8 +40,8 @@ func TestIngnitionRaid(t *testing.T) {
 			return fmt.Errorf("level, found %q", a.Level)
 		}
 
-		if a.Spares != 42 {
-			return fmt.Errorf("spares, found %q", a.Spares)
+		if *a.Spares != 42 {
+			return fmt.Errorf("spares, found %q", *a.Spares)
 		}
 
 		return nil

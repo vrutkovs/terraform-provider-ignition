@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestIngnitionFileReplace(t *testing.T) {
+func TestIgnitionFileReplace(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_config" "test" {
 			replace {
@@ -21,12 +21,12 @@ func TestIngnitionFileReplace(t *testing.T) {
 		}
 	`, func(c *types.Config) error {
 		r := c.Ignition.Config.Replace
-		if r == nil {
-			return fmt.Errorf("unable to find replace config")
-		}
+		// if r == nil {
+		// 	return fmt.Errorf("unable to find replace config")
+		// }
 
-		if r.Source != "foo" {
-			return fmt.Errorf("config.replace.source, found %q", r.Source)
+		if *r.Source != "foo" {
+			return fmt.Errorf("config.replace.source, found %q", *r.Source)
 		}
 
 		if *r.Verification.Hash != "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" {
@@ -37,27 +37,27 @@ func TestIngnitionFileReplace(t *testing.T) {
 	})
 }
 
-func TestIngnitionFileAppend(t *testing.T) {
+func TestIgnitionFileMerge(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_config" "test" {
-			append {
+			merge {
 				source = "foo"
 				verification = "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 			}
 
-		    append {
+		    merge {
 		    	source = "foo"
 		    	verification = "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 			}
 		}
 	`, func(c *types.Config) error {
-		a := c.Ignition.Config.Append
+		a := c.Ignition.Config.Merge
 		if len(a) != 2 {
-			return fmt.Errorf("unable to find append config, expected 2")
+			return fmt.Errorf("unable to find merge config, expected 2")
 		}
 
-		if a[0].Source != "foo" {
-			return fmt.Errorf("config.replace.source, found %q", a[0].Source)
+		if string(*a[0].Source) != "foo" {
+			return fmt.Errorf("config.replace.source, found %q", *a[0].Source)
 		}
 
 		if *a[0].Verification.Hash != "sha512-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" {
@@ -68,7 +68,7 @@ func TestIngnitionFileAppend(t *testing.T) {
 	})
 }
 
-func TestIngnitionFileReplaceNoVerification(t *testing.T) {
+func TestIgnitionFileReplaceNoVerification(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_config" "test" {
 			replace {
@@ -77,12 +77,9 @@ func TestIngnitionFileReplaceNoVerification(t *testing.T) {
 		}
 	`, func(c *types.Config) error {
 		r := c.Ignition.Config.Replace
-		if r == nil {
-			return fmt.Errorf("unable to find replace config")
-		}
 
-		if r.Source != "foo" {
-			return fmt.Errorf("config.replace.source, found %q", r.Source)
+		if string(*r.Source) != "foo" {
+			return fmt.Errorf("config.replace.source, found %q", *r.Source)
 		}
 
 		if r.Verification.Hash != nil {
@@ -93,25 +90,25 @@ func TestIngnitionFileReplaceNoVerification(t *testing.T) {
 	})
 }
 
-func TestIngnitionFileAppendNoVerification(t *testing.T) {
+func TestIgnitionFileMergeNoVerification(t *testing.T) {
 	testIgnition(t, `
 		data "ignition_config" "test" {
-			append {
+			merge {
 				source = "foo"
 			}
 
-			append {
+			merge {
 				source = "foo"
 			}
 		}
 	`, func(c *types.Config) error {
-		a := c.Ignition.Config.Append
+		a := c.Ignition.Config.Merge
 		if len(a) != 2 {
-			return fmt.Errorf("unable to find append config, expected 2")
+			return fmt.Errorf("unable to find merge config, expected 2")
 		}
 
-		if a[0].Source != "foo" {
-			return fmt.Errorf("config.replace.source, found %q", a[0].Source)
+		if string(*a[0].Source) != "foo" {
+			return fmt.Errorf("config.replace.source, found %q", *a[0].Source)
 		}
 
 		if a[0].Verification.Hash != nil {
@@ -187,11 +184,9 @@ func TestIgnitionConfigFilesystems(t *testing.T) {
 	}
 
 	data "ignition_filesystem" "test" {
-		name = "test"
-		mount {
-			device = "/dev/sda"
-			format = "ext4"
-	 	}
+		path = "/test"
+		device = "/dev/sda"
+		format = "ext4"
 	 }
 
 	data "ignition_config" "test" {
@@ -202,8 +197,8 @@ func TestIgnitionConfigFilesystems(t *testing.T) {
 	}
 	`, func(c *types.Config) error {
 		f := c.Storage.Filesystems[0]
-		if f.Name != "test" {
-			return fmt.Errorf("device, found %q", f.Name)
+		if string(*f.Path) != "/test" {
+			return fmt.Errorf("device, found %q", *f.Path)
 		}
 		return nil
 	})
@@ -217,7 +212,6 @@ func TestIgnitionConfigFiles(t *testing.T) {
 	}
 
 	data "ignition_file" "test" {
-		filesystem = "foo"
 		path = "/hello.text"
 		content {
 			content = "Hello World!"
@@ -232,8 +226,8 @@ func TestIgnitionConfigFiles(t *testing.T) {
 	}
 	`, func(c *types.Config) error {
 		f := c.Storage.Files[0]
-		if f.Filesystem != "foo" {
-			return fmt.Errorf("device, found %q", f.Filesystem)
+		if f.Path != "/hello.text" {
+			return fmt.Errorf("device, found %q", f.Path)
 		}
 		return nil
 	})
