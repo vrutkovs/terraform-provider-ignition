@@ -160,17 +160,17 @@ func buildConfig(d *schema.ResourceData, c *cache) (*types.Config, error) {
 }
 
 func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {
-	var err error
-
 	i := types.Ignition{}
 	i.Version = types.MaxVersion.String()
 
 	rr := d.Get("replace.0").(map[string]interface{})
 	if len(rr) != 0 {
-		i.Config.Replace, err = buildConfigReference(rr)
+		r, err := buildConfigReference(rr)
 		if err != nil {
 			return i, err
 		}
+
+		i.Config.Replace = *r
 	}
 
 	ar := d.Get("merge").([]interface{})
@@ -190,7 +190,7 @@ func buildIgnition(d *schema.ResourceData) (types.Ignition, error) {
 
 func buildConfigReference(raw map[string]interface{}) (*types.ConfigReference, error) {
 	r := &types.ConfigReference{}
-	r.Source = raw["source"].(string)
+	r.Source = raw["source"].(*string)
 
 	hash := raw["verification"].(string)
 	if hash != "" {
