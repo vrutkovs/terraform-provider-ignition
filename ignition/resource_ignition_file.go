@@ -121,10 +121,11 @@ func buildFile(d *schema.ResourceData, c *cache) (string, error) {
 
 	var contents types.FileContents
 	if hasContent {
-		contents.Source = encodeDataURL(
+		s := encodeDataURL(
 			d.Get("content.0.mime").(string),
 			d.Get("content.0.content").(string),
 		)
+		contents.Source = &s
 	}
 
 	if hasSource {
