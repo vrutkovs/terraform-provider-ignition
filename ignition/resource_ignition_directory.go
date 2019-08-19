@@ -10,11 +10,6 @@ func dataSourceDirectory() *schema.Resource {
 		Exists: resourceDirectoryExists,
 		Read:   resourceDirectoryRead,
 		Schema: map[string]*schema.Schema{
-			"filesystem": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
 			"path": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -60,21 +55,8 @@ func resourceDirectoryExists(d *schema.ResourceData, meta interface{}) (bool, er
 
 func buildDirectory(d *schema.ResourceData, c *cache) (string, error) {
 	dir := &types.Directory{}
-	dir.Filesystem = d.Get("filesystem").(string)
-	if err := handleReport(dir.ValidateFilesystem()); err != nil {
-		return "", err
-	}
-
 	dir.Path = d.Get("path").(string)
-	if err := handleReport(dir.ValidatePath()); err != nil {
-		return "", err
-	}
-
 	dir.Mode = d.Get("mode").(int)
-	if err := handleReport(dir.ValidateMode()); err != nil {
-		return "", err
-	}
-
 	uid := d.Get("uid").(int)
 	if uid != 0 {
 		dir.User = types.NodeUser{ID: &uid}
@@ -83,6 +65,10 @@ func buildDirectory(d *schema.ResourceData, c *cache) (string, error) {
 	gid := d.Get("gid").(int)
 	if gid != 0 {
 		dir.Group = types.NodeGroup{ID: &gid}
+	}
+
+	if err := handleReport(dir.Validate()); err != nil {
+		return "", err
 	}
 
 	return c.addDirectory(dir), nil
