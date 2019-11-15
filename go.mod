@@ -1,4 +1,4 @@
-module github.com/terraform-providers/terraform-provider-ignition
+module github.com/vrutkovs/terraform-provider-ignition/v2
 
 require (
 	github.com/coreos/ignition v0.0.0-20170904171445-ea573e121f72
